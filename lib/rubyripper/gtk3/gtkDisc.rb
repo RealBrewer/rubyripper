@@ -192,15 +192,29 @@ class GtkDisc
   def setTrackValues
     @allTracksButton = Gtk::CheckButton.new(_('All'))
     @varArtistLabel = Gtk::Label.new(_('Artist'))
+    @varArtistLabel.xalign = 0
     @tracknameLabel = Gtk::Label.new(_("Track names \(%s track(s)\)") % [@disc.audiotracks])
+    @tracknameLabel.xalign = 0
     @lengthLabel = Gtk::Label.new(_("Length \(%s\)") % [@disc.playtime])
 
     @checkTrackArray = Array.new ; @varArtistEntryArray = Array.new ; @trackEntryArray = Array.new ; @lengthLabelArray = Array.new
     (1..@disc.audiotracks).each do |track|
       @checkTrackArray << Gtk::CheckButton.new(track.to_s)
-      @varArtistEntryArray << Gtk::Entry.new()
-      @trackEntryArray << Gtk::Entry.new()
-      @lengthLabelArray << Gtk::Label.new(@disc.getLengthText(track))
+      
+      # Create and configure Artist Entry
+      artist_entry = Gtk::Entry.new()
+      artist_entry.xalign = 0
+      @varArtistEntryArray << artist_entry
+      
+      # Create and configure Track Entry
+      track_entry = Gtk::Entry.new()
+      track_entry.xalign = 0
+      @trackEntryArray << track_entry
+      
+      # Create and configure Length Label
+      length_label = Gtk::Label.new(@disc.getLengthText(track))
+      length_label.xalign = 1 # Right-align the numbers for a cleaner look
+      @lengthLabelArray << length_label
     end
   end
 
@@ -227,9 +241,9 @@ class GtkDisc
                            Gtk::AttachOptions::SHRINK, 0, 0) #4th column, 1st row
 
     if @md.various?
-      @trackInfoTable.attach(@varArtistLabel, 1, 2, 0, 1, Gtk::AttachOptions::FILL,
+      @trackInfoTable.attach(@varArtistLabel, 1, 2, 0, 1, Gtk::AttachOptions::FILL|Gtk::AttachOptions::EXPAND,
                              Gtk::AttachOptions::SHRINK, 0, 0) #2nd column, 1st row
-      @trackInfoTable.attach(@tracknameLabel, 2, 3, 0, 1, Gtk::AttachOptions::FILL,
+      @trackInfoTable.attach(@tracknameLabel, 2, 3, 0, 1, Gtk::AttachOptions::FILL|Gtk::AttachOptions::EXPAND,
                              Gtk::AttachOptions::SHRINK, 0, 0) #3rd column, 1st row
     else
       @trackInfoTable.attach(@tracknameLabel, 1, 3, 0, 1, Gtk::AttachOptions::FILL|Gtk::AttachOptions::EXPAND,
@@ -243,9 +257,9 @@ class GtkDisc
                              Gtk::AttachOptions::SHRINK, 0, 0) #4th column, 2nd row till end
 
       if @md.various?
-        @trackInfoTable.attach(@varArtistEntryArray[index], 1, 2, index + 1, index + 2, Gtk::AttachOptions::FILL,
+        @trackInfoTable.attach(@varArtistEntryArray[index], 1, 2, index + 1, index + 2, Gtk::AttachOptions::FILL|Gtk::AttachOptions::EXPAND,
                                Gtk::AttachOptions::SHRINK, 0, 0)
-        @trackInfoTable.attach(@trackEntryArray[index], 2, 3, index + 1, index + 2, Gtk::AttachOptions::FILL,
+        @trackInfoTable.attach(@trackEntryArray[index], 2, 3, index + 1, index + 2, Gtk::AttachOptions::FILL|Gtk::AttachOptions::EXPAND,
                                Gtk::AttachOptions::SHRINK, 0, 0)
       else
         @trackInfoTable.attach(@trackEntryArray[index],1, 3, 1 + index, 2 + index,
